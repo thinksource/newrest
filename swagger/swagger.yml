@@ -1,0 +1,150 @@
+swagger: "2.0"
+info:
+  description: This is the swagger file that goes with our server code
+  version: "1.0.0"
+  title: Swagger Rest Article
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /api
+
+# Paths supported by the server application
+paths:
+  /category:
+    get:
+      operationId: api.category.read_all
+      tags:
+        - Category
+      summary: Read the entire set of people, sorted by last name
+      description: Read the entire set of people, sorted by last name
+      responses:
+        200:
+          description: Successfully read people set operation
+          schema:
+            type: array
+            items:
+              properties:
+                id:
+                  type: string
+                  description: Id of the cat
+                name:
+                  type: string
+                  description: category name
+
+    post:
+      operationId: api.category.create
+      tags:
+        - Category
+      summary: Create a person
+      description: Create a new person
+      parameters:
+        - name: category
+          in: body
+          description: Person to create
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: uuid of the category
+              name:
+                type: string
+                description: name of person to category
+      responses:
+        201:
+          description: Successfully created 
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Id of the person
+              name:
+                type: string
+  
+
+  /category/{category_id}:
+    get:
+      operationId: api.category.read_one
+      tags:
+        - Category
+      summary: Read one person
+      description: Read one person
+      parameters:
+        - name: category_id
+          in: path
+          description: Id of the person to get
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Successfully read person from people data operation
+          schema:
+            type: object
+            properties:
+              person_id:
+                type: string
+                description: Id of the person
+              fname:
+                type: string
+                description: First name of the person
+              lname:
+                type: string
+                description: Last name of the person
+              timestamp:
+                type: string
+                description: Creation/Update timestamp of the person record
+
+    put:
+      operationId: api.category.update
+      tags:
+        - Category
+      summary: Update a person
+      description: Update a person
+      parameters:
+        - name: category_id
+          in: path
+          description: Id the person to update
+          type: string
+          required: True
+        - name: category
+          in: body
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: First name of the person
+      responses:
+        200:
+          description: Successfully updated person
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Id of the person in the database
+              name:
+                type: string
+                description: First name of the person
+
+    delete:
+      operationId: api.category.delete
+      tags:
+        - Category
+      summary: Delete a person from the people list
+      description: Delete a person
+      parameters:
+        - name: category_id
+          in: path
+          type: string
+          description: Id of the person to delete
+          required: true
+      responses:
+        200:
+          description: Successfully deleted a person
+
+
