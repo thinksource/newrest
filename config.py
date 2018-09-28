@@ -13,10 +13,11 @@ app = connex_app.app
 
 # Build the Sqlite ULR for SqlAlchemy
 # sqlite_url = 'sqlite:////' + os.path.join(basedir, 'people.db')
-post_url='postgres://postgres:postgres@52.40.252.126:5432/ormproj'
+file=open('db.txt','r')
+
 # Configure the SqlAlchemy part of the app instance
 app.config['SQLALCHEMY_ECHO'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = post_url
+app.config['SQLALCHEMY_DATABASE_URI'] = file.read()  #you should use your own data uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 def initdb(app):
