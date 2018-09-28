@@ -9,12 +9,7 @@ class Category(db.Model):
     __tablename__ = 'Category'
     id = db.Column(postgresql.UUID(as_uuid=True), primary_key=True)
     name = db.Column(db.String(80), nullable=False)
-    category = relationship("Product", back_populates='category')
-
-class CategorySchema(ModelSchema):
-    class Meta:
-        model = Category
-        sqla_session=db.session
+    products = relationship("Product", back_populates='category')
 
 class Product(db.Model):
     __tablename__='Product'
@@ -26,6 +21,12 @@ class Product(db.Model):
     price = db.Column(db.DECIMAL(10, 2), nullable=False)
     category_id=db.Column(postgresql.UUID, db.ForeignKey('Category.id'))
     category = relationship("Category", back_populates='products')
+
+class CategorySchema(ModelSchema):
+    class Meta:
+        model = Category
+        sqla_session=db.session
+
 
 class ProductSchema(ModelSchema):
     class Meta:

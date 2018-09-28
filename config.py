@@ -13,7 +13,7 @@ app = connex_app.app
 
 # Build the Sqlite ULR for SqlAlchemy
 # sqlite_url = 'sqlite:////' + os.path.join(basedir, 'people.db')
-post_url=''
+post_url='postgres://postgres:postgres@52.40.252.126:5432/ormproj'
 # Configure the SqlAlchemy part of the app instance
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = post_url

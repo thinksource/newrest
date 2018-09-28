@@ -1,13 +1,17 @@
 from flask import make_response, abort,jsonify
 from config import db
 from models import Category, CategorySchema
+from utils import validate_uuid, uuid_error
 import uuid
 def read_all():
     cate = Category.query.order_by(Category.name).all()
     cate_schema = CategorySchema(many=True)
     data = cate_schema.dump(cate).data
     return data
+
 def read_one(category_id):
+    if not validate_uuid(category_id, 4):
+        return uuid_error("Category","id")
     cate = Category.query.filter(Category.id == category_id).one_or_none()
     if cate is not None:
         cate_schema = CategorySchema()
@@ -15,10 +19,12 @@ def read_one(category_id):
         return data
     else:
         message = 'Category do not found for Id:{id}'.format(id=category_id)
-        abort(404, jsonify(message=message))
+        abort(404, message)
 
 def create(category):
     id = category.get('id')
+    if not validate_uuid(id, 4):
+        return uuid_error("Category","id")
     name=category.get('name')
     existing_cate = Category.query.filter(Category.id == id).one_or_none()
     if id is None:
@@ -36,9 +42,11 @@ def create(category):
         
     else:
         message= 'Category {id}, {name} exists already'.format(id=id, name=name)
-        abort(409,jsonify(message=message))
+        abort(409,message)
 
 def update(category_id, category):
+    if not validate_uuid(category_id, 4):
+        return uuid_error("Category","id")
     updata_item = Category.query.filter(Category.id == category_id).one_or_none()
     if updata_item is not None:
         schema = CategorySchema()
@@ -51,18 +59,20 @@ def update(category_id, category):
 
     else:
         message='Category not found for Id: {c_id}'.format(c_id=category_id)
-        abort(404, jsonify(message=message))
+        abort(404, message)
 
 def delete(category_id):
+    if not validate_uuid(category_id, 4):
+        return uuid_error("Category","id")
     cate = Category.query.filter(Category.id == category_id).one_or_none()
 
     if cate is not None:
         db.session.delete(cate)
         db.session.commit()
         message='Category {id} deleted'.format(id=category_id)
-        return jsonify(message=message), 200
+        return jsonify(message=message)
 
     # Otherwise, nope, didn't find that person
     else:
         message="Category not found for Id:{id}".format(id={category_id})
-        abort(404, jsonify(message=message))
+        abort(404, message)
