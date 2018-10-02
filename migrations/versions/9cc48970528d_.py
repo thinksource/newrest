@@ -28,7 +28,7 @@ def upgrade():
     sa.Column('name', sa.String(length=80), nullable=False),
     sa.Column('desc', sa.TEXT(), nullable=True),
     sa.Column('provider', sa.String(length=200), nullable=False),
-    sa.Column('barcode', sa.String(length=20), nullable=False),
+    sa.Column('barcode', sa.String(length=50), nullable=False),
     sa.Column('price', sa.DECIMAL(precision=10, scale=2), nullable=False),
     sa.Column('category_id', postgresql.UUID(), nullable=True),
     sa.ForeignKeyConstraint(['category_id'], ['Category.id'], ),

@@ -17,11 +17,11 @@ paths:
       operationId: api.category.read_all
       tags:
         - Category
-      summary: Read the entire set of people, sorted by last name
-      description: Read the entire set of people, sorted by last name
+      summary: Read the entire set of Category
+      description: Read the entire set of Category
       responses:
         200:
-          description: Successfully read people set operation
+          description: Successfully read Category
           schema:
             type: array
             items:
@@ -37,8 +37,8 @@ paths:
       operationId: api.category.create
       tags:
         - Category
-      summary: Create a person
-      description: Create a new person
+      summary: Create a Category
+      description: Create a new Category
       parameters:
         - name: category
           in: body
@@ -52,7 +52,7 @@ paths:
                 description: uuid of the category
               name:
                 type: string
-                description: name of person to category
+                description: name of  category
       responses:
         201:
           description: Successfully created 
@@ -61,18 +61,17 @@ paths:
             properties:
               id:
                 type: string
-                description: Id of the person
+                description: Id of the Category
               name:
                 type: string
-  
-
+    
   /category/{category_id}:
     get:
       operationId: api.category.read_one
       tags:
         - Category
-      summary: Read one person
-      description: Read one person
+      summary: Read one Category
+      description: Read one Category
       parameters:
         - name: category_id
           in: path
@@ -83,31 +82,18 @@ paths:
         200:
           description: Successfully read person from people data operation
           schema:
-            type: object
-            properties:
-              person_id:
-                type: string
-                description: Id of the person
-              fname:
-                type: string
-                description: First name of the person
-              lname:
-                type: string
-                description: Last name of the person
-              timestamp:
-                type: string
-                description: Creation/Update timestamp of the person record
+            $ref: '#/definitions/Category'
 
     put:
       operationId: api.category.update
       tags:
         - Category
-      summary: Update a person
-      description: Update a person
+      summary: Update a Category
+      description: Update a Category
       parameters:
         - name: category_id
           in: path
-          description: Id the person to update
+          description: Id the Category to update
           type: string
           required: True
         - name: category
@@ -117,19 +103,12 @@ paths:
             properties:
               name:
                 type: string
-                description: First name of the person
+                description: name of the Category
       responses:
         200:
-          description: Successfully updated person
+          description: Successfully updated Category
           schema:
-            type: object
-            properties:
-              id:
-                type: string
-                description: Id of the person in the database
-              name:
-                type: string
-                description: First name of the person
+            $ref: '#/definitions/Category'
 
     delete:
       operationId: api.category.delete
@@ -147,4 +126,66 @@ paths:
         200:
           description: Successfully deleted a person
 
+  /product:
+    get:
+      operationId: api.product.read_all
+      tags:
+        - Product
+      summary: Read the Products
+      description: Read the Products
+      responses:
+        200:
+          description: Successfully read product set operation
+          schema:
+            $ref: '#/definitions/AllProduct'
+
+    post:
+      operationId: api.product.create
+      tags:
+        - Product
+      summary: Create a product
+      description: Create a new product
+      parameters:
+        - name: product
+          in: body
+          description: Product to create
+          required: True
+          schema:
+            type: object
+            $ref: '#/definitions/Product'
+              
+      responses:
+        201:
+          description: Successfully created 
+          schema:
+            $ref: '#/definitions/Product'
+
+definitions:
+  Category:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+  
+  Product:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      provider:
+        type: string
+      barcode:
+        type: string
+      price:
+        type: number
+      category_id:
+        type: string
+  AllProduct:
+    type: array
+    items:
+      $ref: '#/definitions/Product'
 

@@ -1,28 +1,40 @@
-from models import Product, ProductSchema
-from utils import validate_uuid, uuid_error
+from models import Product
+from utils import validate_uuid, uuid_notvalidate,uuid_notfound, already_exist
 from config import db
+from flask import jsonify
 import uuid
 obj="Product"
 def read_all():
-    item = Product.query.order_by(Product.name).all()
-    item_schema = ProductSchema(many=True)
-    data = item_schema.dump(item).data
-    return data
+    items = Product.query.order_by(Product.name).all()
+    # data = item_schema.dump(item).data
+    res=[]
+    for item in items:
+        res.append(item.to_dict())
+    return jsonify(res)
 
-def create(req):
-    id = req.get('id')
+def create(product):
+    id = product.get('id')
     if not validate_uuid(id, 4):
-        return uuid_error(obj,"id")
-    name=req.get('name')
+        return uuid_notvalidate(obj,"id")
     existing_item = Product.query.filter(Product.id == id).one_or_none()
     if id is None:
         id = uuid.uuid4()
-        req['id']=id
+        product['id']=id
     if existing_item is None:
-        schema = ProductSchema()
-        print(dir(schema))
-        new_item = schema.load(req, session=db.session).data
-        db.session.add(new_item)
-        db.session.commit()
-        data = schema.dump(new_item).data
-        return data, 201
+        item = Product.create(**product)
+        return jsonify(item.to_dict()), 201
+    else:
+        return already_exist(obj, 'id')
+
+def update(product):
+    id = product.get('id')
+    if not validate_uuid(id, 4):
+        return uuid_notvalidate(obj, "id")
+    existing_item = Product.query.filter(Product.id == id).one_or_none()
+    if existing_item is None:
+        return uuid_notfound(obj, 'id')
+    else:
+        existing_item.update(product)
+        return jsonify(existing_item.to_dict()), 201
+    
+        

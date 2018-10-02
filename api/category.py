@@ -1,78 +1,67 @@
-from flask import make_response, abort,jsonify
+from models import Category
+from utils import validate_uuid, uuid_notvalidate
 from config import db
-from models import Category, CategorySchema
-from utils import validate_uuid, uuid_error
+from flask import jsonify
+
 import uuid
+
 def read_all():
-    cate = Category.query.order_by(Category.name).all()
-    cate_schema = CategorySchema(many=True)
-    data = cate_schema.dump(cate).data
-    return data
+    items = Category.query.order_by(Category.name).all()
+    res=[]
+    for item in items:
+        res.append(item.to_dict())
+    return jsonify(res)
 
 def read_one(category_id):
     if not validate_uuid(category_id, 4):
-        return uuid_error("Category","id")
+        return uuid_notvalidate("Category","id")
     cate = Category.query.filter(Category.id == category_id).one_or_none()
     if cate is not None:
-        cate_schema = CategorySchema()
-        data = cate_schema.dump(cate).data
-        return data
+        return jsonify(cate)
     else:
         message = 'Category do not found for Id:{id}'.format(id=category_id)
-        abort(404, message)
+        return {message:message},404
 
 def create(category):
     id = category.get('id')
     if not validate_uuid(id, 4):
-        return uuid_error("Category","id")
+        return uuid_notvalidate("Category","id")
     name=category.get('name')
     existing_cate = Category.query.filter(Category.id == id).one_or_none()
     if id is None:
         id = uuid.uuid4()
-        category['id']=id
-    print(category)    
+        category['id']=id    
     if existing_cate is None:
-        schema = CategorySchema()
-        print(dir(schema))
-        new_cate = schema.load(category, session=db.session).data
-        db.session.add(new_cate)
-        db.session.commit()
-        data = schema.dump(new_cate).data
-        return data, 201
+        cate = Category.create(**category)
+        return jsonify(cate.to_dict()), 201
         
     else:
         message= 'Category {id}, {name} exists already'.format(id=id, name=name)
-        abort(409,message)
+        return {message:message},409
 
 def update(category_id, category):
     if not validate_uuid(category_id, 4):
-        return uuid_error("Category","id")
+        return uuid_notvalidate("Category","id")
     updata_item = Category.query.filter(Category.id == category_id).one_or_none()
     if updata_item is not None:
-        schema = CategorySchema()
-        update = schema.load(category, session=db.session).data
-        update.id = updata_item.id
-        db.session.merge(update)
-        db.session.commit()
-        data = schema.dump(update).data
-        data.session.commit()
+        updata_item.update(category)
+        return jsonify(updata_item.to_dict()), 201
 
     else:
         message='Category not found for Id: {c_id}'.format(c_id=category_id)
-        abort(404, message)
+        return {message:message},404
 
 def delete(category_id):
     if not validate_uuid(category_id, 4):
-        return uuid_error("Category","id")
+        return uuid_notvalidate("Category","id")
     cate = Category.query.filter(Category.id == category_id).one_or_none()
 
     if cate is not None:
-        db.session.delete(cate)
-        db.session.commit()
+        cate.delete()
         message='Category {id} deleted'.format(id=category_id)
-        return jsonify(message=message)
+        return {message:message}
 
     # Otherwise, nope, didn't find that person
     else:
-        message="Category not found for Id:{id}".format(id={category_id})
-        abort(404, message)
+        message="Id:{id} is not correct format".format(id={category_id})
+        return {message:message},404

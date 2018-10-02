@@ -29,3 +29,9 @@ The api requirement is base on /api path, so the correct way to visit api is
 for instance:
 
 /category is actually http://localhost:5000/api/category
+
+
+# Models 
+
+1. dbmodels.py in charge of serialization and deseralization, and some easy save update method.
+2. 

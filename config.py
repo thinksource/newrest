@@ -1,7 +1,7 @@
 import os
 import connexion
 from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
+
 from flask_migrate import Migrate
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -30,5 +30,4 @@ def initdb(app):
 # Create the SqlAlchemy db instance
 db = initdb(app)
 
-# Initialize Marshmallow
-ma = Marshmallow(app)
+
