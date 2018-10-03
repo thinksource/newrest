@@ -159,7 +159,8 @@ paths:
           description: Successfully created 
           schema:
             $ref: '#/definitions/Product'
-    
+
+  /product/{product_id}:
     put:
       operationId: api.product.update
       tags:
@@ -167,6 +168,11 @@ paths:
       summary: Create a product
       description: Create a new product
       parameters:
+        - name: product_id
+          in: path
+          type: string
+          description: Id of the product for updating
+          required: true
         - name: product
           in: body
           description: Product to create

@@ -39,25 +39,38 @@ for instance:
 # rest api
 
 ### Category
+
 GET /category
+
 POST /category
+
 DELETE /category/{category_id}
+
 GET /category/{category_id}
+
 PUT /category/{category_id}
 
 
 ### Order 
 GET /order
+
 POST /order
+
 GET /order/{order_id}
+
 POST /order/{order_id}
 
 ### Order_Item 
 DELETE /order_item/{item_id}
+
 POST /order_item/{item_id}
 
 ### Product 
-DELETE /product
+
 GET /product
+
 POST /product
-PUT /product
+
+PUT /product/{product_id}
+
+DELETE /product/{product_id}

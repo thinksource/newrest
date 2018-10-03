@@ -26,7 +26,7 @@ def create(product):
     else:
         return already_exist(obj, 'id')
 
-def update(product):
+def update(product_id, product):
     id = product.get('id')
     if not validate_uuid(id, 4):
         return uuid_notvalidate(obj, "id")
