@@ -59,8 +59,7 @@ class OutputMixin(object):
                 elif isinstance(value.__class__, DeclarativeMeta):
                     res[relation.key] = value.to_dict(backref=self.__table__)
                 else:
-                    res[relation.key] = [i.to_dict(backref=self.__table__)
-                                         for i in value]
+                    res[relation.key] = [i.to_dict(backref=self.__table__) for i in value]
         return res
 
     def to_json(self, rel=None):

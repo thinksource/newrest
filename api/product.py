@@ -36,5 +36,16 @@ def update(product):
     else:
         existing_item.update(product)
         return jsonify(existing_item.to_dict()), 201
+
+def delete(product_id):
+    if not validate_uuid(product_id, 4):
+        return uuid_notvalidate(obj, "id")
+    existing_item = Product.query.filter(Product.id == product_id).one_or_none()
+    if existing_item is None:
+        return uuid_notfound(obj, 'id')
+    else:
+        existing_item.delete()
+        msg = "{} with id({}) already delete".format(obj, product_id)
+        return jsonify(message=msg)
     
         

@@ -114,17 +114,17 @@ paths:
       operationId: api.category.delete
       tags:
         - Category
-      summary: Delete a person from the people list
-      description: Delete a person
+      summary: Delete a category from the people list
+      description: Delete a category
       parameters:
         - name: category_id
           in: path
           type: string
-          description: Id of the person to delete
+          description: Id of the category to delete
           required: true
       responses:
         200:
-          description: Successfully deleted a person
+          description: Successfully deleted a category
 
   /product:
     get:
@@ -159,7 +159,149 @@ paths:
           description: Successfully created 
           schema:
             $ref: '#/definitions/Product'
+    
+    put:
+      operationId: api.product.update
+      tags:
+        - Product
+      summary: Create a product
+      description: Create a new product
+      parameters:
+        - name: product
+          in: body
+          description: Product to create
+          required: True
+          schema:
+            type: object
+            $ref: '#/definitions/Product'
+              
+      responses:
+        201:
+          description: Successfully created 
+          schema:
+            $ref: '#/definitions/Product'
 
+    delete:
+      operationId: api.product.delete
+      tags:
+        - Product
+      summary: Delete a product from the people list
+      description: Delete a product
+      parameters:
+        - name: product_id
+          in: path
+          type: string
+          description: Id of the product to delete
+          required: true
+      responses:
+        200:
+          description: Successfully deleted a product
+
+  /order:
+    post:
+      operationId: api.order.create
+      tags:
+        - Order
+      parameters:
+        - name: order
+          in: body
+          description: Order to create
+          required: True
+          schema:
+            type: object
+            $ref: '#/definitions/Order'
+            
+      responses:
+        201:
+          description: Successfully created
+          schema:
+            $ref: '#/definitions/Order'
+  
+    get:
+      operationId: api.order.list
+      tags:
+        - Order
+      parameters:
+        - name: customer
+          in: query
+          required: False
+          type: string
+      
+      responses:
+        200:
+          description: Successfully listed
+          schema:
+            $ref: '#/definitions/ListOrder'
+            
+  /order/{order_id}:
+    put:
+      operationId: api.order.update_status
+      tags:
+        - Order
+      parameters:
+        - name: order_id
+          in: path
+          required: True
+          type: string
+        - name: order
+          in: body
+          required: True
+          schema:
+            $ref: '#/definitions/OrderNoDetials'
+      responses:
+        201:
+          description: Successfully update
+          schema:
+            $ref: '#/definitions/OrderNoDetials'
+    get:
+      operationId: api.order.order_details
+      tags:
+        - Order
+      parameters:
+        - name: order_id
+          in: path
+          required: True
+          type: string
+      
+      responses:
+        200:
+          description: get detail of order
+          schema:
+            $ref: '#/definitions/Order'
+            
+  /order_item/{item_id}:
+    post:
+      operationId: api.order.orderdeatail_update
+      tags:
+        - Order_Item
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          type: string
+        - name: order_item
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Order_Item'
+      responses:
+        201:
+          description: Successfully update
+          
+    delete:
+      operationId: api.order.orderitem_delete
+      tags:
+        - Order_Item
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successfully delete
+
+              
 definitions:
   Category:
     type: object
@@ -188,4 +330,61 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Product'
+  
+  Order_Item:
+    type: object
+    properties:
+      id:
+        type: string
+      product_id:
+        type: string
+      amount:
+        type: number
+      item_price:
+        type: number
+      order_id:
+        type: string
+  
+  Order_Item_Array:
+    type: array
+    items:
+      $ref: '#/definitions/Order_Item'
+    
+  Order:
+    type: object
+    properties:
+      id:
+        type: string
+      desc:
+        type: string
+      customer:
+        type: string
+      totalpayment:
+        type: number
+      status:
+        type: string
+      order_item:
+        type: array
+        items:
+          $ref: '#/definitions/Order_Item_Array'
+
+  OrderNoDetials:
+    type: object
+    properties:
+      id:
+        type: string
+      desc:
+        type: string
+      customer:
+        type: string
+      totalpayment:
+        type: number
+      status:
+        type: string
+
+  ListOrder:
+    type: array
+    items:
+      $ref: '#/definitions/OrderNoDetials'
+
 

@@ -25,4 +25,18 @@ class Product(MyModel):
 class Order(MyModel):
     __tablename__ = 'Order'
     id = sa.Column(postgresql.UUID, primary_key=True)
-    
+    desc = sa.Column(sa.String(200), nullable=True)
+    customer = sa.Column(sa.String(80), nullable=False)
+    totalpayment=sa.Column(sa.DECIMAL(14,2), nullable=False)
+    status = sa.Column(sa.String(30), nullable=False)
+    order_item = relationship("Order_Item", back_populates='order')
+
+class Order_Item(MyModel):
+    __taablename__ = 'Order_item'
+    id = sa.Column(postgresql.UUID(as_uuid=True), primary_key=True)
+    product_id=sa.Column(postgresql.UUID, sa.ForeignKey('Product.id'))
+    # product = relationship("Product", back_populates='Product', uselist=False)
+    amount = sa.Column(sa.Integer, nullable=False)
+    item_price = sa.Column(sa.DECIMAL(10, 2), nullable=False)
+    order_id=sa.Column(postgresql.UUID,sa.ForeignKey('order.id'))
+    order = relationship("Order", back_populates='order_item', uselist=True)

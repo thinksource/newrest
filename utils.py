@@ -11,8 +11,6 @@ def validate_uuid(uuid_string,ver):
         # If it's a value error, then the string 
         # is not a valid hex code for a UUID.
         return False
-    print(val.hex)
-    print(uuid_string)
     return val.hex == uuid_string.replace('-','')
 
 def uuid_notvalidate(objstr, field):
