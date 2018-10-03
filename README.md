@@ -10,13 +10,15 @@ venv\Scripts\activate.bat
 
 # How to run
 
-1. npm install -r requirements.txt
+1. pip install -r requirements.txt
 2. set the config.py rewrite database url.
 
 I use the postgresql database. If you use other type of database please adopt it.
 
-3. npm manage.py db upgrade
-4. npm manage.py runserver
+3. python manage.py db init
+4. python manage.py db migrate
+5. python manage.py db upgrade
+4. python manage.py runserver
 
 You can see the swagger style rest-api and the swaggeer ui in:
 

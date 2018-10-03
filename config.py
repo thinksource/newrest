@@ -6,10 +6,13 @@ from flask_migrate import Migrate
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Create the connexion application instance
-connex_app = connexion.App(__name__, specification_dir=basedir+'\\swagger')
+connex_app = connexion.FlaskApp(__name__, static_folder="static/dist", \
+    template_folder="static", specification_dir=basedir+'\\swagger')
 
 # Get the underlying Flask app instance
 app = connex_app.app
+setattr(app, 'static_folder', basedir + '\\static\\dist')
+setattr(app, 'template_folder', basedir+ '\\static')
 
 # Build the Sqlite ULR for SqlAlchemy
 # sqlite_url = 'sqlite:////' + os.path.join(basedir, 'people.db')

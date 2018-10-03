@@ -1,3 +1,7 @@
+#npm webpack
+node_modules/
+dist/
+
 # pycharm stuff
 .idea
 
