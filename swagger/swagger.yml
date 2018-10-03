@@ -151,7 +151,6 @@ paths:
           description: Product to create
           required: True
           schema:
-            type: object
             $ref: '#/definitions/Product'
               
       responses:
@@ -161,6 +160,21 @@ paths:
             $ref: '#/definitions/Product'
 
   /product/{product_id}:
+    get:
+      operationId: api.product.read
+      tags:
+        - Product
+      description: Read a product
+      parameters:
+        - name: product_id
+          in: path
+          type: string
+          required: true
+      responses:
+        200:
+          description: Read Certain Product
+          schema:
+            $ref: '#/definitions/Product'
     put:
       operationId: api.product.update
       tags:
@@ -178,7 +192,6 @@ paths:
           description: Product to create
           required: True
           schema:
-            type: object
             $ref: '#/definitions/Product'
               
       responses:
@@ -214,7 +227,6 @@ paths:
           description: Order to create
           required: True
           schema:
-            type: object
             $ref: '#/definitions/Order'
             
       responses:
@@ -259,6 +271,26 @@ paths:
           description: Successfully update
           schema:
             $ref: '#/definitions/OrderNoDetials'
+    post:
+      operationId: api.order.orderdetail_add
+      description: add new order item to certain order
+      tags:
+        - Order_Item
+      parameters:
+        - name: order_id
+          in: path
+          required: True
+          type: string
+        - name: order_item
+          in: body
+          required: True
+          schema:
+            $ref: '#/definitions/Order_Item'
+      responses:
+        201:
+          description: Successfully update
+          schema:
+            $ref: '#/definitions/Order_Item'
     get:
       operationId: api.order.order_details
       tags:
@@ -276,8 +308,8 @@ paths:
             $ref: '#/definitions/Order'
             
   /order_item/{item_id}:
-    post:
-      operationId: api.order.orderdeatail_update
+    put:
+      operationId: api.order.orderdetail_update
       tags:
         - Order_Item
       parameters:
@@ -392,5 +424,3 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/OrderNoDetials'
-
-

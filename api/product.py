@@ -12,6 +12,16 @@ def read_all():
         res.append(item.to_dict())
     return jsonify(res)
 
+def read(product_id):
+    if not validate_uuid(product_id, 4):
+        return uuid_notvalidate(obj, product_id)
+    else:
+        existing_item = Product.query.filter(Product.id == product_id).one_or_none()
+        if existing_item is None:
+            return uuid_notfound(obj, product_id)
+        else:
+            return jsonify(existing_item.to_dict())
+
 def create(product):
     id = product.get('id')
     if not validate_uuid(id, 4):

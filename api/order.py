@@ -6,6 +6,7 @@ from config import db
 obj="Order"
 def create(order):
     id = order.get('id') if order.get('id') else str(uuid.uuid4())
+    # delete random repeat id
     while True:
         existing_item = Order.query.filter(Order.id == id).one_or_none()
         if existing_item is None:
@@ -80,8 +81,35 @@ def order_details(order_id):
             return uuid_notfound(obj, id)
         else:
             return jsonify(existing_item)
-    
-def orderdeatail_update(item_id, order_item):
+
+def orderdetail_add(order_id, order_item):
+    if not validate_uuid(order_id,4):
+        return uuid_notvalidate(obj, order_id)
+    else:
+        existing_order = Order.query.filter(Order.id == order_id).one_or_none()
+        if existing_order is None:
+            return uuid_notfound(obj, order_id)
+        else:
+            itemid=order_item['id'] if order_item['id'] else uuid.uuid4()
+            # delete random repeat id
+            while True:
+                existing_item = Order_Item.query.filter(Order_Item.id == itemid).one_or_none()
+                if existing_item is None:
+                    break
+                else:
+                    itemid = uuid.uuid4()
+            if "amount" not in order_item:
+                order_item["amount"] = 1
+            order_item['order_id'] = order_id
+            res=Order_Item.create(commit=False, **order_item)
+            oldpayment = existing_order.get("totalpayment")
+            newpayment=oldpayment+order_item['itemprice']*order_item["amount"]
+            new_order = {"totalpayment": newpayment}
+            existing_order.update(**new_order)
+            return jsonify(res.to_dict()), 201
+            
+
+def orderdetail_update(item_id, order_item):
     id=order_item.get("id")
     order_id = order_item.get('order_id')
     if not validate_uuid(order_id, 4):
@@ -90,7 +118,7 @@ def orderdeatail_update(item_id, order_item):
         return uuid_notvalidate("Order_Item", id)
     else:
         existing_item = Order_Item.query.filter(Order_Item.id == id).one_or_none()
-        existing_order = Order.query.filter(Order.id == order_id).one_or_one()
+        existing_order = Order.query.filter(Order.id == order_id).one_or_none()
         
         if existing_item is None:
             return uuid_notfound("Order_Item", id)
