@@ -17,6 +17,10 @@ class CRUDMixin(object):
         """Update specific fields of a record."""
         # Prevent changing ID of object
         kwargs.pop('id', None)
+        # db.session.query(self).update(kwargs)
+        # if commit:
+        #     db.session.commit()
+        # return self
         for attr, value in kwargs.items():
             # Flask-RESTful makes everything None by default :/
             if value is not None:

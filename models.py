@@ -6,7 +6,7 @@ from sqlalchemy import orm
 from uuid import UUID
 class Category(MyModel):
     __tablename__ = 'Category'
-    id = sa.Column(postgresql.UUID(as_uuid=True), primary_key=True)
+    id = sa.Column(postgresql.UUID, primary_key=True)
     name = sa.Column(sa.String(80), nullable=False)
     products = relationship("Product", back_populates='category')
 
@@ -34,7 +34,8 @@ class Order(MyModel):
 class Order_Item(MyModel):
     __tablename__ = 'Order_item'
     id = sa.Column(postgresql.UUID(as_uuid=True), primary_key=True)
-    product_id=sa.Column(postgresql.UUID, sa.ForeignKey('Product.id'))
+    product_id = sa.Column(postgresql.UUID, sa.ForeignKey('Product.id'), nullable=True)
+    product_name=sa.Column(sa.String(80), nullable=False)
     # product = relationship("Product", back_populates='Product', uselist=False)
     amount = sa.Column(sa.Integer, nullable=False)
     item_price = sa.Column(sa.DECIMAL(10, 2), nullable=False)

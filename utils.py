@@ -6,7 +6,7 @@ def arg2jsonstr(**kwargs):
 
 def validate_uuid(uuid_string,ver):
     try:
-        val = UUID(uuid_string, version=ver)
+        val = UUID(uuid_string.replace('-', ''), version=ver)
     except ValueError:
         # If it's a value error, then the string 
         # is not a valid hex code for a UUID.
@@ -14,13 +14,13 @@ def validate_uuid(uuid_string,ver):
     return val.hex == uuid_string.replace('-','')
 
 def uuid_notvalidate(objstr, field):
-    message = "{}.{} should be validated uuid".format(objstr, field)
-    return jsonify(message=message), 501
+    msg = "{}.{} should be validated uuid".format(objstr, field)
+    return jsonify(message=msg), 501
 
 def uuid_notfound(objstr, field):
-    message = "it can not find {} by uuid{}.".format(objstr, field)
-    return jsonify(message=message), 404
+    msg = "it can not find {} by uuid{}.".format(objstr, field)
+    return jsonify(message=msg), 404
 
 def already_exist(objstr, field):
-    message = "{} with ID{} already exist.".format(objstr, field)
-    return jsonify(message=message), 409
+    msg = "{} with ID{} already exist.".format(objstr, field)
+    return jsonify(message=msg), 409

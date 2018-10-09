@@ -60,12 +60,15 @@ POST /order
 
 GET /order/{order_id}
 
+PUT /order/{order_id}
+
+### Order_Item
+
 POST /order/{order_id}
 
-### Order_Item 
 DELETE /order_item/{item_id}
 
-POST /order_item/{item_id}
+PUT /order_item/{item_id}
 
 ### Product 
 
@@ -90,8 +93,15 @@ It require react and webpack to run.
 ```
 npm install
 ```
-3. build the frontend wiht webpack:
+3. build the frontend with webpack:
 
 ```
 npm run build
 ```
+
+# THe result expection
+
+1. it will run on localhost:5000
+2. the front end have two page:
+    2.1. localhost:5000/  is the front-end work
+    2.2. http://localhost:5000/backend/ is manager of product and category

@@ -44,7 +44,7 @@ def update(product_id, product):
     if existing_item is None:
         return uuid_notfound(obj, 'id')
     else:
-        existing_item.update(product)
+        existing_item.update(**product)
         return jsonify(existing_item.to_dict()), 201
 
 def delete(product_id):
