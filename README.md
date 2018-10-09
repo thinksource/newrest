@@ -76,3 +76,22 @@ POST /product
 PUT /product/{product_id}
 
 DELETE /product/{product_id}
+
+
+# About frontend
+
+The frontend it static folder.
+It require react and webpack to run.
+
+## before running
+
+1. install last version node js
+2. install package:
+```
+npm install
+```
+3. build the frontend wiht webpack:
+
+```
+npm run build
+```
