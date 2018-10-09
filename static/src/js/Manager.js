@@ -1,11 +1,11 @@
 
 import React, { Component } from 'react';
 import 'antd/dist/antd.css';
-import { Tabs, Table, Button, Modal, Input, Alert } from 'antd';
+import { Tabs, Table, Button, Modal, Input, Alert, Select,InputNumber } from 'antd';
 import "@babel/polyfill";
 import axios from 'axios';
 
-
+const Option = Select.Option;
 
 const product_columns = [
     { title: 'Id', dataIndex: 'id', key: 'id' },
@@ -22,6 +22,7 @@ const product_columns = [
 //   ];
 const TabPane = Tabs.TabPane;
 class Manager extends Component {
+
 
     cate_columns = [
         {
@@ -47,15 +48,20 @@ class Manager extends Component {
             new_product_box: false,
             edit_product_box:false,
             product_visible: false,
-            edit_cate_item: {}
+            edit_cate_item: {},
+            catedict: {}
         };
         this.editModal = React.createRef();
         this.edit_cate_name = React.createRef();
+        this.product_cate = React.createRef();
+        this.producte_price = React.createRef();
 
         this.init_cate();
         this.init_product();
         window.mystate = this.state;
         window.axios = axios;
+        window.product_cate = this.product_cate;
+        window.product_price = this.producte_price;
     }
 
     async delete_cate(id) { 
@@ -93,8 +99,6 @@ class Manager extends Component {
                 }
             }
         )
-
-        // console.log(e.innerHTML)
     }
 
     async editCategory() {
@@ -136,6 +140,11 @@ class Manager extends Component {
             category_visible: true
         });
     }
+    showProduct() {
+        this.setState({
+            new_product_box: true
+        });
+    }
 
     hideCategory() { 
         this.setState({
@@ -168,8 +177,20 @@ class Manager extends Component {
         this.hideCategory();
     }
 
-    async addNewProduct() { 
-
+    async addNewProduct() {
+        let newproduct = {};
+        newproduct["name"] = document.getElementById("product_name").value;
+        newproduct["desc"] = document.getElementById("product_desc").value;
+        newproduct["provider"] = document.getElementById("product_provider").value;
+        newproduct["barcode"] = document.getElementById("product_barcode").value;
+        console.log(this.product_cate);
+        console.log(this.product_price.valueOf());
+        newproduct["price"] = this.product_price.value;
+        newproduct["category_id"] = this.product_cate.value;
+        
+        console.log(newproduct);
+        
+        // await axios.post('/api/product')
     }
 
     onChange(key) { 
@@ -216,7 +237,7 @@ class Manager extends Component {
                 <Alert banner={this.state.alert} message={this.state.message}
                     type={this.state.alert_type} closable></Alert>
                 <Button type="primary" onClick={()=>this.showCategory()}>Add Category</Button>
-                <Button type="primary">Add Product</Button>
+                <Button type="primary" onClick={()=>this.showProduct()}>Add Product</Button>
                 <Modal
                     title="add new Category"
                     visible={this.state.category_visible}
@@ -237,21 +258,30 @@ class Manager extends Component {
                         <label id>{this.state.edit_cate_item.id}</label>
                     </p>
                     <label for="cate_name">Input category name:</label>
-                    <Input type="text" ref={this.edit_cate_name}
+                    <Input type="text" ref="edit_cate_name"
                         value={this.state.edit_cate_item.name}
                         onChange={e=>this.editname(e)}/>
                 </Modal>
                 <Modal
                     title="add new Product"
-                    visible={this.state.category_visible}
+                    visible={this.state.new_product_box}
                     onCancel={() => this.setState({ new_product_box: false })}
                     onOk={()=>this.addNewProduct()}>
                     <label for="product_name">Input product name:</label>
                     <Input type="text" id="product_name"/>
                     <label for="product_desc">Input product description:</label>
                     <Input type="text" id="product_desc" />
-                    <label for="product_desc">Input product provider:</label>
-                    <Input type="text" id="product_desc" />
+                    <label for="product_provider">Input product provider:</label>
+                    <Input type="text" id="product_provider" />
+                    <label for="product_barcode">Input product barcode:</label>
+                    <Input type="text" id="product_barcode" />
+                    <label for="product_price">Input product price:</label>
+                    <InputNumber type="text" ref={this.product_price} step={0.01} min={0}/>
+                    <label for="product_cate">Input Category:</label>
+                    <Select style={{ width: 200 }} ref={this.product_cate}>
+                        {Object.entries(this.state.catedict)
+                            .map(en => <Option key={en[0]}>{en[1]}</Option>)}
+                    </Select>
                 </Modal>
                 <Tabs defaultActiveKey="Cate" onChange={key => this.onChange(key)} type="card">
                     <TabPane tab="Category" key="category">
