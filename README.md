@@ -80,7 +80,7 @@ DELETE /product/{product_id}
 
 # About frontend
 
-The frontend it static folder.
+The frontend project is in static folder.
 It require react and webpack to run.
 
 ## before running
