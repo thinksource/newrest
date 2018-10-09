@@ -32,11 +32,11 @@ class Order(MyModel):
     order_item = relationship("Order_Item", back_populates='order')
 
 class Order_Item(MyModel):
-    __taablename__ = 'Order_item'
+    __tablename__ = 'Order_item'
     id = sa.Column(postgresql.UUID(as_uuid=True), primary_key=True)
     product_id=sa.Column(postgresql.UUID, sa.ForeignKey('Product.id'))
     # product = relationship("Product", back_populates='Product', uselist=False)
     amount = sa.Column(sa.Integer, nullable=False)
     item_price = sa.Column(sa.DECIMAL(10, 2), nullable=False)
-    order_id=sa.Column(postgresql.UUID,sa.ForeignKey('order.id'))
+    order_id=sa.Column(postgresql.UUID,sa.ForeignKey('Order.id'))
     order = relationship("Order", back_populates='order_item', uselist=True)

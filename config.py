@@ -11,8 +11,8 @@ connex_app = connexion.FlaskApp(__name__, static_folder="static/dist", \
 
 # Get the underlying Flask app instance
 app = connex_app.app
-setattr(app, 'static_folder', basedir + '\\static\\dist')
-setattr(app, 'template_folder', basedir+ '\\static')
+setattr(app, 'static_folder', basedir + '\\static\\build\\static')
+setattr(app, 'template_folder', basedir+ '\\static\\build\\')
 
 # Build the Sqlite ULR for SqlAlchemy
 # sqlite_url = 'sqlite:////' + os.path.join(basedir, 'people.db')

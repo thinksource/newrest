@@ -1,38 +1,40 @@
 {
-  "name": "levo-frontend",
+  "name": "mymobx",
   "version": "1.0.0",
-  "description": "react frontend with webpack",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev": "webpack-dev-server",
-    "start": "webpack-dev-server --config ./webpack.config.js --mode development",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack-dev-server --content-base src --inline --hot --mode=development",
+    "prestart": "npm run build",
+    "build": "webpack --mode=production",
+    "start": "http-server ./build"
   },
-  "author": "Sheng",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ]
+  "dependencies": {
+    "antd": "^3.10.0",
+    "axios": "^0.18.0",
+    "mobx": "^5.5.0",
+    "mobx-react": "^5.2.8",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-decorators": "^7.1.2",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.4",
+    "copy-webpack-plugin": "^4.5.2",
     "css-loader": "^1.0.0",
-    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^2.0.0",
-    "react": "^16.5.2",
-    "react-bootstrap": "^0.32.4",
-    "react-dom": "^16.5.2",
-    "react-hot-loader": "^4.3.11",
+    "mobx-react-devtools": "^6.0.3",
     "style-loader": "^0.23.0",
+    "web-dev-server": "^1.1.1",
     "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.9"
-  },
-  "dependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0"
+    "webpack-cli": "^3.1.2"
   }
 }

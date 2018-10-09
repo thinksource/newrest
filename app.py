@@ -21,4 +21,15 @@ def home():
     :return:        the rendered template "home.html"
     """
     
-    return render_template("index.html")
+    return render_template("front.html")
+
+@connex_app.route('/back')
+def back():
+    """
+    This function just responds to the browser URL
+    localhost:5000/
+
+    :return:        the rendered template "home.html"
+    """
+    
+    return render_template("back.html")

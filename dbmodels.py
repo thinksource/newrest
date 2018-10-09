@@ -45,6 +45,7 @@ class OutputMixin(object):
     def to_dict(self, rel=None, backref=None):
         if rel is None:
             rel = self.RELATIONSHIPS_TO_DICT
+
         res = {column.key: getattr(self, attr)
                for attr, column in self.__mapper__.c.items()}
         if rel:
@@ -52,7 +53,9 @@ class OutputMixin(object):
                 # Avoid recursive loop between to tables.
                 if backref == relation.table:
                     continue
+                
                 value = getattr(self, attr)
+
                 if value is None:
                     res[relation.key] = None
 

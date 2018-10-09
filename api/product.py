@@ -9,7 +9,7 @@ def read_all():
     # data = item_schema.dump(item).data
     res=[]
     for item in items:
-        res.append(item.to_dict())
+        res.append(item.to_dict(rel=True))
     return jsonify(res)
 
 def read(product_id):

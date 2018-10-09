@@ -1,52 +1,69 @@
+var debug = process.env.NODE_ENV !== "production";
 const webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const config = {
-    entry:  __dirname + '/js/index.jsx',
-    output: {
-        path: __dirname + '/dist',
-        publicPath:'/',
-        filename: 'bundle.js',
-    },
-    devServer: {
-        contentBase: './dist',
-        hot: true
-    },
-    resolve: {
-        extensions: [".js", ".jsx", ".css"]
-    },
-    module: {
-        rules: [
-            {
-                test: /\.jsx?/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [
-                            '@babel/preset-env',
-                            "@babel/preset-react"
-                        ]
-                    }
-                }
-            },
-            {
-                test: /\.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: 'css-loader',
-                })
-            },
-            {
-                test: /\.(png|svg|jpg|gif)$/,
-                use: 'file-loader'
-            }
-        ]
-    },
-    plugins: [
-        new ExtractTextPlugin('styles.css'),
-        new webpack.HotModuleReplacementPlugin()
+// const fronthtmlPlugin = new HtmlWebPackPlugin({
+//   template: "./front.html",
+//   filename: "./front.html"
+// });
+
+
+console.log(path.resolve(__dirname, 'build'));
+console.log(__dirname + '\\src\\*.html');
+module.exports = {
+  context: path.join(__dirname, "src"),
+  devtool: debug ? "inline-sourcemap" : null,
+  entry: {
+    front: "./js/front.js",
+    back:"./js/back.js"
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: "babel-loader"
+        }
+      },
+      {
+        test: /\.css$/,
+        use: [
+              {loader: "style-loader"},
+              {loader: "css-loader"}
+          ]
+      },
+      // {
+      //   test: /\.(html)$/,
+      //   use: [{
+      //     loader: "file-loader",
+      //     options: {
+      //       name: '[name].[ext]',
+      //       emitFile: true,
+      //       context: path.join(__dirname, "src"),
+      //       outputPath: path.join(__dirname, "build")
+      //     }
+      //   }]
+      // }
     ]
+  },
+  output: {
+    path: path.join(__dirname, "build\\static"),
+    chunkFilename: '[name].bundle.js',
+    filename: "[name].bundle.js"
+  },
+  // optimizations: {
+  //   splitChunks: {
+  //     chunks:'all'
+  //   }
+  // },
+  plugins: [
+    new CopyWebpackPlugin([
+      {
+       from: __dirname + '\\src\\*.html',
+       to: path.resolve(__dirname, 'build')
+     }
+   ])
+  ],
 };
-
-module.exports = config;
