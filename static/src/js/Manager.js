@@ -7,14 +7,7 @@ import axios from 'axios';
 
 const Option = Select.Option;
 
-const product_columns = [
-    { title: 'Id', dataIndex: 'id', key: 'id' },
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Provider', dataIndex: 'provider', key: 'provider' },
-    { title: 'Price', dataIndex: 'price', key: 'price' },
-    
-    { title: 'Action', dataIndex: '', key: 'x', render: () => <a href="javascript:;">Delete</a> },
-];
+
 //   const data = [
 //     { key: 1, name: 'John Brown', age: 32, address: 'New York No. 1 Lake Park', description: 'My name is John Brown, I am 32 years old, living in New York No. 1 Lake Park.' },
 //     { key: 2, name: 'Jim Green', age: 42, address: 'London No. 1 Lake Park', description: 'My name is Jim Green, I am 42 years old, living in London No. 1 Lake Park.' },
@@ -22,18 +15,35 @@ const product_columns = [
 //   ];
 const TabPane = Tabs.TabPane;
 class Manager extends Component {
-
+    product_columns = [
+        {
+            title: 'Id', dataIndex: 'id', key: 'id', render: (text) => <a href="javascript:;"
+                onClick={e => { this.showProductEdit(e)}}
+            >{text}</a>
+        },
+        { title: 'Name', dataIndex: 'name', key: 'name' },
+        { title: 'Provider', dataIndex: 'provider', key: 'provider' },
+        { title: 'Price', dataIndex: 'price', key: 'price' },
+        
+        {
+            title: 'Action', dataIndex: 'id', key: 'x', render: (text) =>
+                <a href="javascript:;"onClick={() => this.delete_product(text)}>Delete</a>
+        },
+    ];
 
     cate_columns = [
         {
             title: 'Id', dataIndex: 'id', key: 'id', render: text => <a href="javascript:;"
                 onClick={e => {
-                    this.showedit(e);
+                    this.showCategoryEdit(e);
                 }
                 }>{text}</a>
         },
         { title: 'Name', dataIndex: 'name', key: 'name' },
-        { title: 'Action', dataIndex: 'id', key: 'x', render: (text) => <a href="javascript:;" onClick={()=>this.delete_cate(text)}>Delete</a> },
+        {
+            title: 'Action', dataIndex: 'id', key: 'x', render: (text) =>
+                <a href="javascript:;" onClick={() => this.delete_cate(text)}>Delete</a>
+        },
     ]
     
 
@@ -47,21 +57,24 @@ class Manager extends Component {
             edit_cate_box: false,
             new_product_box: false,
             edit_product_box:false,
-            product_visible: false,
+            edit_product_item: {},
             edit_cate_item: {},
             catedict: {}
         };
         this.editModal = React.createRef();
         this.edit_cate_name = React.createRef();
         this.product_cate = React.createRef();
-        this.producte_price = React.createRef();
+        this.product_price = React.createRef();
+        this.eproduct_cate = React.createRef();
+        
 
         this.init_cate();
         this.init_product();
         window.mystate = this.state;
         window.axios = axios;
-        window.product_cate = this.product_cate;
-        window.product_price = this.producte_price;
+        window.eproduct_cate = this.eproduct_cate;
+        
+
     }
 
     async delete_cate(id) { 
@@ -85,7 +98,28 @@ class Manager extends Component {
         this.init_cate();
     }
 
-    async showedit(e) {
+    async delete_product(id) { 
+        await axios.delete(`/api/product/${id}`).then(
+            res => { 
+                if (res.status == 200) {
+                    this.setState({
+                        message: "successful deleted",
+                        alert_type: "success"
+                    });
+                 }
+            }
+        ).catch(
+            err => { 
+                this.setState({
+                    message: err.data.message,
+                    alert_type: "error"
+                });
+            }
+        )
+        this.init_product();
+    }
+
+    async showCategoryEdit(e) {
         let that = this;
         console.log(e.target.innerText);
         await axios.get(`/api/category/${e.target.innerText}`).then(
@@ -96,6 +130,29 @@ class Manager extends Component {
                         edit_cate_item: res.data,
                         edit_cate_box: true
                     });
+                }
+            }
+        )
+    }
+    async showProductEdit(e) {
+        console.log(e.target.innerText);
+        await axios.get(`/api/product/${e.target.innerText}`).then(
+            res => {
+                if (res.status == 200) { 
+                    this.setState({
+                        edit_product_box: true,
+                        edit_product_item: res.data
+                    });
+                    document.getElementById("eproduct_name").value = res.data.name;
+                
+                    document.getElementById("eproduct_desc").value = res.data.desc;
+                    document.getElementById("eproduct_provider").value=res.data.provider;
+                    document.getElementById("eproduct_barcode").value = res.data.barcode;
+                    document.getElementById("eproduct_price").value = res.data.price;
+                    this.eproduct_cate.current.rcSelect.setState({
+                        value: [res.data.category_id]
+                    });
+
                 }
             }
         )
@@ -183,14 +240,72 @@ class Manager extends Component {
         newproduct["desc"] = document.getElementById("product_desc").value;
         newproduct["provider"] = document.getElementById("product_provider").value;
         newproduct["barcode"] = document.getElementById("product_barcode").value;
-        console.log(this.product_cate);
-        console.log(this.product_price.valueOf());
-        newproduct["price"] = this.product_price.value;
-        newproduct["category_id"] = this.product_cate.value;
+        // console.log(this.product_cate.current.props);
+
+        newproduct["price"] = Number(document.getElementById("product_price").value);
+        newproduct["category_id"] = this.product_cate.current.rcSelect.state.value[0];
         
         console.log(newproduct);
         
-        // await axios.post('/api/product')
+        await axios.post('/api/product', newproduct).then(res => { 
+            if (res.status == 201) { 
+                this.setState({
+                    message: "successfull add new product",
+                    alert_type: "success"
+                });
+                this.init_product();
+            }
+        }).catch(err => {
+            let msg = err.data.message ? err.data.message : err.data.detial;
+            this.setState({
+                message: msg,
+                alert_type: "error"
+            });
+            }).finally(() => { 
+                this.setState({
+                    new_product_box: false
+                });
+                document.getElementById("product_name").value = "";
+                document.getElementById("product_desc").value="";
+                document.getElementById("product_provider").value="";
+                document.getElementById("product_barcode").value="";
+                document.getElementById("product_price").value = "";
+                this.product_cate.current.rcSelect.state.value = [];
+            })
+    }
+
+    async editProduct() {
+        let tmpdata = this.state.edit_product_item;
+        // let id = tmpdata.id;
+        console.log(tmpdata);
+        tmpdata["name"] = document.getElementById("eproduct_name").value;
+        tmpdata["desc"] = document.getElementById("eproduct_desc").value;
+        tmpdata["provider"] = document.getElementById("eproduct_provider").value;
+        tmpdata["barcode"] = document.getElementById("eproduct_barcode").value;
+        tmpdata["price"] = Number(document.getElementById("eproduct_price").value);
+        tmpdata["category_id"] = this.eproduct_cate.current.rcSelect.state.value[0];
+        console.log(tmpdata);
+
+        axios.put(`/api/product/${tmpdata.id}`, tmpdata).then(
+            res => { 
+                if (res.status == 201) { 
+                    this.setState({
+                        message: "update item successful",
+                        alert_type: "success"
+                    });
+                    this.init_product();
+                }
+            }
+        ).catch(err => { 
+            this.setState({
+                message: "update error ",
+                alert_type: "error"
+            });
+            }).finally(() => { 
+                this.setState({
+                    edit_product_box: false
+                });
+            })
     }
 
     onChange(key) { 
@@ -276,9 +391,31 @@ class Manager extends Component {
                     <label for="product_barcode">Input product barcode:</label>
                     <Input type="text" id="product_barcode" />
                     <label for="product_price">Input product price:</label>
-                    <InputNumber type="text" ref={this.product_price} step={0.01} min={0}/>
+                    <InputNumber type="text" id="product_price" step={0.01} min={0}/>
                     <label for="product_cate">Input Category:</label>
                     <Select style={{ width: 200 }} ref={this.product_cate}>
+                        {Object.entries(this.state.catedict)
+                            .map(en => <Option key={en[0]}>{en[1]}</Option>)}
+                    </Select>
+                </Modal>
+                <Modal
+                    title="edit Product"
+                    visible={this.state.edit_product_box}
+                    onCancel={() => this.setState({ edit_product_box: false })}
+                    onOk={() => this.editProduct()}>
+
+                    <label for="eproduct_name">Input product name:</label>
+                    <Input type="text" id="eproduct_name"/>
+                    <label for="eproduct_desc">Input product description:</label>
+                    <Input type="text" id="eproduct_desc" />
+                    <label for="eproduct_provider">Input product provider:</label>
+                    <Input type="text" id="eproduct_provider" />
+                    <label for="eproduct_barcode">Input product barcode:</label>
+                    <Input type="text" id="eproduct_barcode" />
+                    <label for="eproduct_price">Input product price:</label>
+                    <InputNumber type="text" id="eproduct_price"step={0.01} min={0} />
+                    <label for="product_cate">Input Category:</label>
+                    <Select style={{ width: 200 }} ref={this.eproduct_cate}>
                         {Object.entries(this.state.catedict)
                             .map(en => <Option key={en[0]}>{en[1]}</Option>)}
                     </Select>
@@ -291,12 +428,15 @@ class Manager extends Component {
                 /></TabPane>
                     <TabPane tab="Product" key="product" type="card">
                         <Table
-                        columns={product_columns}
+                        columns={this.product_columns}
                             expandedRowRender={record =>
                                 <div>
-                                <p>
+                                   <p>
                                     category: {this.state.catedict[record.category_id]}
-                                </p>
+                                    </p>
+                                    <p>
+                                    barcode: {record.barcode}
+                                     </p>
                                     <p style={{ margin: 0 }}>
                                         description: {record.desc}
                                     </p>

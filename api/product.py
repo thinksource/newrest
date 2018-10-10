@@ -23,18 +23,20 @@ def read(product_id):
             return jsonify(existing_item.to_dict())
 
 def create(product):
-    id = product.get('id')
+    id = product.get('id') if product.get('id') else str(uuid.uuid4())
     if not validate_uuid(id, 4):
-        return uuid_notvalidate(obj,"id")
-    existing_item = Product.query.filter(Product.id == id).one_or_none()
-    if id is None:
-        id = uuid.uuid4()
-        product['id']=id
-    if existing_item is None:
-        item = Product.create(**product)
-        return jsonify(item.to_dict()), 201
-    else:
-        return already_exist(obj, 'id')
+        return uuid_notvalidate(obj, "id")
+    while True:
+        existing_item = Product.query.filter(Product.id == id).one_or_none()
+        if existing_item is None:
+            product['id'] = id
+            break
+        else:
+            id = str(uuid.uuid4())
+            
+    item = Product.create(**product)
+    return jsonify(item.to_dict()), 201
+
 
 def update(product_id, product):
     id = product.get('id')

@@ -35,13 +35,10 @@ def create(category):
             break
         else:
             id = str(uuid.uuid4())
-    name=category.get('name')  
-    if existing_cate is None:
-        cate = Category.create(**category)
-        return jsonify(cate.to_dict()), 201
-    else:
-        message= 'Category {id}, {name} exists already'.format(id=id, name=name)
-        return {"message":message},409
+
+    cate = Category.create(**category)
+    return jsonify(cate.to_dict()), 201
+
 
 def update(category_id, category):
     if not validate_uuid(category_id, 4):
