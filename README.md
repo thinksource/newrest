@@ -104,4 +104,4 @@ npm run build
 1. it will run on localhost:5000
 2. the front end have two page:
     2.1. localhost:5000/  is the front-end work
-    2.2. http://localhost:5000/backend/ is manager of product and category
+    2.2. http://localhost:5000/back is manager of product and category
