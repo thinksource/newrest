@@ -1,69 +1,80 @@
 import React, { Component } from 'react';
-import { Table, Modal } from 'antd';
+import { Table, Button } from 'antd';
 import axios from 'axios';
-import 'antd/dist/antd.css';
-const columns = [{
-    title: 'Name',
-    dataIndex: 'name',
-    render: text => <a href="javascript:;">{text}</a>,
-  }, {
-    title: 'Id',
-    dataIndex: 'age',
-  }, {
-    title: 'Address',
-    dataIndex: 'address',
-  }];
-  const data = [{
-    key: '1',
-    name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-  }, {
-    key: '2',
-    name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-  }, {
-    key: '3',
-    name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-  }, {
-    key: '4',
-    name: 'Disabled User',
-    age: 99,
-    address: 'Sidney No. 1 Lake Park',
-  }];
-  
-  // rowSelection object indicates the need for row selection
-  const rowSelection = {
+import PubSub from 'pubsub-js';
+// import 'antd/dist/antd.css';
+import "@babel/polyfill";
+
+
+// rowSelection object indicates the need for row selection
+const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
     getCheckboxProps: record => ({
-      disabled: record.name === 'Disabled User', // Column configuration not to be checked
-      name: record.name,
+        disabled: record.name === 'Disabled User', // Column configuration not to be checked
+        name: record.name,
     }),
 };
-  
-class ItemShelf extends Component { 
-    constructor(props) { 
-        super(props);
-    }
+
+class ItemShelf extends Component {
+    product_columns = [
+        { title: 'Id', dataIndex: 'id', key: 'id' },
+        { title: 'Name', dataIndex: 'name', key: 'name' },
+        { title: 'Provider', dataIndex: 'provider', key: 'provider' },
+        { title: 'Price', dataIndex: 'price', key: 'price' },
+
+    ];
 
     rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => { 
-            
+        onChange: (selectedRowKeys, selectedRows) => {
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            this.setState({
+                selectItem: selectedRows
+            })
+        },
+        getCheckboxProps: record => ({
+            disabled: record.name === 'Disabled User', // Column configuration not to be checked
+            name: record.name,
+        }),
+    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            selectItem:[]
         }
     }
-    render() { 
+    
+    componentWillMount() { 
+        this.init_product();
+    }
+    async init_product() {
+        let that = this;
+        await axios.get('/api/product').then(res => {
+            if (res.status == 200) {
+                that.setState(
+                    { productdata: res.data }
+                );
+            }
+        });
+    }
+
+    addCard() { 
+        console.log(this.state.selectItem);
+        PubSub.publish(this.props.topic, this.state.selectItem);
+    }
+
+    render() {
         return (
             <div>
-                <h1>shelf</h1>
-                <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+                <h3>Item Shelf:</h3>
+                <Button onClick={()=>this.addCard()}>Add Card</Button>
+                <Table rowSelection={this.rowSelection} columns={this.product_columns}
+                    dataSource={this.state.productdata} />
             </div>
         )
     }
 }
+
 
 export default ItemShelf;

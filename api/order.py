@@ -14,15 +14,23 @@ def create(order):
         else:
             id = str(uuid.uuid4())
     order['id'] = id
-    amount, price = create_order_item(order['order_item'], order.get('id'))
+    order_item=order['order_item']
     order.pop('order_item', None)
-    order['totalpayment']=price
-    item = Order.create(**order)
-    item["add_items"]=amount
-    return jsonify(item.to_dict()), 201
+    order['totalpayment'] = 0
+    order['amount']=0
+    created_Order = Order.create(**order)
+    amount, price = create_order_item(order_item, order.get('id'))
+    # neworder['id'] = id
+    neworder={}
+    neworder['totalpayment'] = price
+    created_Order.update(**neworder)
+    ret = created_Order.to_dict()
+    ret["add_items"] = order_item
+    print(ret)
+    return jsonify(ret), 201
 
 def list(customer):
-    if customer:
+    if customer != 'all' :
         existing_item = Order.query.filter(Order.customer == customer).all()
         if len(existing_item) == 0:
             message = "No order from customer named:{}".format(customer)
@@ -48,7 +56,7 @@ def update_status(order_id, order):
         if existing_item is None:
             return uuid_notfound(obj, id)
         else:
-            ret = existing_item.update(order)
+            ret = existing_item.update(**order)
             return jsonify(ret.to_dict()),201
 
 
@@ -68,7 +76,10 @@ def create_order_item(itemlist, orderid):
             order_item = Order_Item(**item)
             order_item.save(False)
             item_count += item['amount']
-            price+=item['item_price']*item['amount']
+            price += item['item_price'] * item['amount']
+        print("====================")
+        print(item_count)
+        print(price)
         return item_count, price
 
 

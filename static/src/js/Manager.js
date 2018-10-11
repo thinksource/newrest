@@ -45,7 +45,20 @@ class Manager extends Component {
                 <a href="javascript:;" onClick={() => this.delete_cate(text)}>Delete</a>
         },
     ]
-    
+
+    order_columns = [
+        {
+            title: "id", dataIndex: 'id', key:"id"
+        }, {
+            title:'desc', dataIndex:'desc', key:'desc'
+        }, {
+            title:'customer', dataIndex:'customer', key:'customer'
+        }, {
+            title:'totalpayment',dataIndex:'totalpayment', key:'totalpayment'
+        }, { title: 'status', dataIndex: 'status', key: 'status' }
+        
+
+    ]    
 
     constructor(props) { 
         super(props);
@@ -70,6 +83,7 @@ class Manager extends Component {
 
         this.init_cate();
         this.init_product();
+        this.init_order();
         window.mystate = this.state;
         window.axios = axios;
         window.eproduct_cate = this.eproduct_cate;
@@ -345,6 +359,16 @@ class Manager extends Component {
             }
         });
     }
+
+    async init_order() { 
+        await axios.get('/api/order?customer=all').then(res => { 
+            if (res.status == 200) { 
+                this.setState(
+                    { orderdata: res.data }
+                );
+            }
+        });
+    }
     render() { 
         return (
             <div>
@@ -443,6 +467,17 @@ class Manager extends Component {
                                 </div>
                             }
                             dataSource={this.state.productdata} />
+                    </TabPane>
+                    <TabPane tab="Order" key="order" type="card">
+                        <Table
+                        columns={this.order_columns}
+                            expandedRowRender={record =>
+                                <div>
+                                   <p>Order details later on
+                                    </p>
+                                </div>
+                            }
+                            dataSource={this.state.orderdata} />
                     </TabPane>
                 </Tabs>
             </div>

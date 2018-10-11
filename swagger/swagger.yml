@@ -383,10 +383,10 @@ definitions:
       order_id:
         type: string
   
-  Order_Item_Array:
-    type: array
-    items:
-      $ref: '#/definitions/Order_Item'
+  # Order_Item_Array:
+  #   type: array
+  #   items:
+  #     $ref: '#/definitions/Order_Item'
     
   Order:
     type: object
@@ -404,7 +404,7 @@ definitions:
       order_item:
         type: array
         items:
-          $ref: '#/definitions/Order_Item_Array'
+          $ref: '#/definitions/Order_Item'
 
   OrderNoDetials:
     type: object
