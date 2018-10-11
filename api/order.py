@@ -49,7 +49,7 @@ def list(customer):
         return jsonify(res)
 
 def update_status(order_id, order):
-    id = order.get('id')
+    id = order_id
     if not validate_uuid(id, 4):
         return uuid_notvalidate(obj, id)
     else:
