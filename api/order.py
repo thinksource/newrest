@@ -1,6 +1,7 @@
 from models import Order, Order_Item
 from flask import jsonify
 from utils import uuid_notvalidate, validate_uuid, uuid_notfound
+from decimal import Decimal
 import uuid
 from config import db
 obj="Order"
@@ -77,9 +78,6 @@ def create_order_item(itemlist, orderid):
             order_item.save(False)
             item_count += item['amount']
             price += item['item_price'] * item['amount']
-        print("====================")
-        print(item_count)
-        print(price)
         return item_count, price
 
 
@@ -91,7 +89,7 @@ def order_details(order_id):
         if existing_item is None:
             return uuid_notfound(obj, id)
         else:
-            return jsonify(existing_item)
+            return jsonify(existing_item.to_dict())
 
 def orderdetail_add(order_id, order_item):
     if not validate_uuid(order_id,4):
@@ -112,9 +110,12 @@ def orderdetail_add(order_id, order_item):
             if "amount" not in order_item:
                 order_item["amount"] = 1
             order_item['order_id'] = order_id
-            res=Order_Item.create(commit=False, **order_item)
-            oldpayment = existing_order.get("totalpayment")
-            newpayment=oldpayment+order_item['itemprice']*order_item["amount"]
+            res = Order_Item(**order_item)
+            res.save(False)
+            
+            oldpayment = existing_order.totalpayment
+            print(order_item)
+            newpayment=oldpayment+Decimal(order_item['item_price']*order_item["amount"])
             new_order = {"totalpayment": newpayment}
             existing_order.update(**new_order)
             return jsonify(res.to_dict()), 201
