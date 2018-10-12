@@ -163,4 +163,15 @@ def orderitem_delete(item_id):
         msg = "Order_Item with id({}) already deleted".format(item_id)
         return jsonify(message=msg)
 
-    
+def orderitem_show(item_id):
+    order_id=item_id
+    existing_item = Order_Item.query.filter(Order_Item.order_id == order_id).all()
+    existing_order = Order.query.filter(Order.id == order_id).one_or_none()
+    if existing_order:
+        res=[]
+        for i in existing_item:
+            res.append(i.to_dict())
+        return jsonify(res)
+    else:
+        msg = "Not correct order id"
+        return jsonify(message=msg)

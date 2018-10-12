@@ -308,6 +308,23 @@ paths:
             $ref: '#/definitions/Order'
             
   /order_item/{item_id}:
+    get:
+      operationId: api.order.orderitem_show
+      tags:
+        - Order_Item
+      parameters:
+        - name: item_id
+          in: path
+          required: true
+          type: string
+
+      responses:
+        200:
+          description: get all order_item from one order
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Order_Item'
     put:
       operationId: api.order.orderdetail_update
       tags:
