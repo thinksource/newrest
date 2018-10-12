@@ -59,7 +59,6 @@ class OutputMixin(object):
                     continue
                 
                 value = getattr(self, attr)
-
                 if value is None:
                     res[relation.key] = None
 

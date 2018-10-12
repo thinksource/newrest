@@ -70,6 +70,8 @@ DELETE /order_item/{item_id}
 
 PUT /order_item/{item_id}
 
+GET /order_item/{order_id}
+
 ### Product 
 
 GET /product
@@ -89,7 +91,8 @@ It require react and webpack to run.
 ## before running
 
 1. install last version node js
-2. install package:
+2. install package
+
 ```
 npm install
 ```
@@ -103,5 +106,7 @@ npm run build
 
 1. it will run on localhost:5000
 2. the front end have two page:
+
     2.1. localhost:5000/  is the front-end work
+
     2.2. http://localhost:5000/back is manager of product and category

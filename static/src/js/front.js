@@ -6,7 +6,7 @@ import ReactDOM from  "react-dom"
 // import TodoList from "./TodoList"
 
 import App from "./App"
-import AppState from "./AppState"
+
 const app = document.getElementById("app");
 
 // ReactDOM.render(<Counter store={TodoStore} />, app)
